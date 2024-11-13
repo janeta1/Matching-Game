@@ -7,9 +7,9 @@ public class App extends Application{
         View myGameView = new View(primaryStage);
         myGameView.show();
 
-        Model myGameModel = new Model(myGameView);
+        Model myGameModel = new Model();
         Controller myGameController = new Controller(myGameModel, myGameView);
-        myGameController.start();
+        myGameController.startGame();
     }
     public static void main(String[] args) throws Exception {
         Application.launch(args);

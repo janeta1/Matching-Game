@@ -1,102 +1,44 @@
 import java.util.ArrayList;
 import java.util.Collections;
-
-import javafx.animation.PauseTransition;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.util.Duration;
+import java.util.List;
 
 public class Model {
-    ArrayList<Button> buttons = new ArrayList<>();
     ArrayList<String> images = new ArrayList<>();
-    int rows = 4, columns = 4;
-    int k = 0;
-    boolean clicked = false;
+    public int matchedCount;
 
-    private Button lastClickedButton = new Button();
-    private String lastClickedEmoji = null;
-    private boolean gameOver = false;
-
-    public Model(View view) {
-        addImages();
-        view.setRows(rows);
-        view.setColumns(columns);
+    /**
+     * Setting up the ArrayList of images that will be on the buttons
+     * @param view
+     */
+    public Model() {
+        images = new ArrayList<>(List.of("🦄", "🐭", "🐣", "🐶", "🦈", "🐼", "🐰", "🐹", "🦄", "🐭", "🐣", "🐶", "🦈", "🐼", "🐰", "🐹"));
         Collections.shuffle(images);
-        for(int i = 0; i < rows; i++) {
-            for(int j = 0; j < columns; j++) {
-                Button newButton = new Button("?");
-                newButton.setPrefSize(600/4, 600/4);
-                buttons.add(newButton);
-                newButton.setStyle("-fx-font-size: 30px;");
-                view.buttonGrid.add(newButton, i, j);
-                int index = k % images.size();
-                newButton.setOnAction(event -> setButtonControls(newButton, images.get(index)));
-                k++;
-            }
-        }
+        matchedCount = 0;
     }
 
-    public void setButtonControls(Button button, String emoji) {
-        if (gameOver || button.getText().equals(emoji)) {
-            return;  // Ignore clicks if the game is over or button already matched
-        }
-
-        button.setText(emoji);  // Show the emoji on the button
-
-        // If this is the first click, store the clicked button and emoji
-        if (!clicked) {
-            lastClickedButton = button;
-            lastClickedEmoji = emoji;
-            clicked = true;
-        } else {
-            // If it's the second click, check if they match
-            if (lastClickedEmoji.equals(emoji)) {
-                // If matched, disable both buttons permanently
-                disableButton(lastClickedButton);
-                disableButton(button);
-                clicked = false;
-            } else {
-                clicked = false;
-                // If not matched, hide the emoji again after a short delay
-                PauseTransition pause = new PauseTransition(Duration.seconds(1));
-                pause.setOnFinished(e -> {
-                    lastClickedButton.setText("?");  // Restore the first button
-                    button.setText("?");  // Restore the second button
-                    lastClickedButton.setDisable(false);  // Enable the first button again
-                    button.setDisable(false);  // Enable the second button again
-                });
-                pause.play();
-            }
-
-            // Reset the last clicked button and emoji
-            //lastClickedButton = new Button();
-            lastClickedEmoji = null;
-        }
+    /**
+     * Method that returns the image of a button
+     * @param index - the index of the button containing the image
+     * @return - a string containing the image of the button
+     */
+    public String getImage(int index) {
+        return images.get(index);
     }
 
-    private void disableButton(Button button) {
-       
-        button.setDisable(true);  // Disable the button
+    /**
+     * Method to check if all the images have been matched
+     * @return - true if all the images have been matched/ false otherwise
+     */
+    public boolean isMatched() {
+        return matchedCount == images.size()/2;
     }
 
-    public void addImages() {
-        images.add("🦄");
-        images.add("🐭");
-        images.add("🐣" );
-        images.add("🦥");
-        images.add("🦈");
-        images.add("🐼");
-        images.add("🦭");
-        images.add("🐹");
-        images.add("🦄");
-        images.add("🐭");
-        images.add("🐣" );
-        images.add("🦥");
-        images.add("🦈");
-        images.add("🐼");
-        images.add("🦭");
-        images.add("🐹");
+    /**
+     * Method to check if the game is over
+     * @return - true if the game is over, false otherwise
+     */
+    public boolean isGameOver() {
+        return this.isMatched();
     }
 
 }
